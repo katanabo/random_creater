@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="game_style.css">
+    <title>Random Number Creator</title>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <h1>私はロボットではありません診断</h1>
+      <div id="wrapper">
+      </div>
+
+      <button class="button" id="cntUp">表(50)</button>
+      <button class="button" id="cntDown">裏(50)</button>
+      
+      <br>
+      <br>
+      <br>
+
+      <form>
+        <input id="reset" type="button" value="リセット"/> 
+      </form>
+
+      <div id="drawerNavi" class="overlay">
+        <div id="drawerClose"><span class="lineClose"></span></div>
+        <div class="overlay-content">
+          <div id="wrapper">
+            <canvas id="myChart"></canvas>
+          </div>
+          <p>投げた回数<br><span id="currentCnt">0</span></p>
+          <p>表が出る確率<br><span id="prob">0</span>%</p>
+          <p>人間らしさ<br><span id="rand">0</span>%</p>
+        </div>
+      </div>
+      <button id="drawerOpen">ドロワーを開く</button>
+      
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="./game_script.js"></script>
+  </body>
+
+</html>
