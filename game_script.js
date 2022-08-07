@@ -134,7 +134,7 @@ type: 'line',
           title: {
               display: true,
               fontSize: 18,
-              text: "経過の様子"
+              text: "結果"
           },
           legend: {
               display: true,
