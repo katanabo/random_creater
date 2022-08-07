@@ -15,9 +15,7 @@ html {
   cursor: pointer;
   user-select: none;
 }
-#canvas{
-  display: block;
-}
+
 html, body, #wrapper{
   margin:0 auto;
   width: 100%;

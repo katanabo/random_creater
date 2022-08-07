@@ -1,11 +1,3 @@
-
-function init() {
-    var wpr = document.getElementById("wrapper");
-    var cvs = document.getElementById("myChart");
-    cvs.width = wpr.offsetWidth;
-    cvs.height = wpr.offsetHeight;
-}
-
 const upButton = document.getElementById("cntUp");
 const downButton = document.getElementById("cntDown");
 const resetButton = document.getElementById("reset");
