@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css">
+    <title>Random Number Creator</title>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <h1>コイン投げゲーム</h1>
+      <div id="wrapper">
+        <canvas id="myChart3"></canvas>
+      </div>
+
+      <p>投げた回数<br><span id="currentCnt">0</span></p>
+      <p>表が出る確率<br><span id="prob">0</span></p>
+      <p>乱数度<br><span id="rand">0</span>%</p>
+      <button class="button" id="cntUp">表</button>
+      <button class="button" id="cntDown">裏</button>
+      
+      <br>
+      <br>
+      <br>
+
+      <form>
+        <input id="reset" type="button" value="リセット"/> 
+      </form>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="./script.js"></script>
+  </body>
+
+</html>
