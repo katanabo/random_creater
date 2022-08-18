@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>touch sample</title>
+  </head>
+
+  <style>
+    canvas {background: #eee; display: block; margin: 20px auto;}
+    canvas{
+      touch-action: none;
+    }
+  </style>
+
+  <body onload="init()">
+    <canvas id="mycanvas" width="320" height="590"></canvas>
+
+    <script>
+      
+        var canvas = document.getElementById( "mycanvas" );
+        var ctx = canvas.getContext("2d");
+        var x, y, relX, relY, objX, objY;
+        var dragging = false;
+        var ondown = true;
+
+        //ball
+        var color = "#b0424e";
+        var ballRadius = 40;
+        var dx = 2;
+        var dy = -3;
+        var dt = 0.05;
+        var t = 0;
+        var maxx = 0;
+
+
+        function init() {
+            t = 0;
+            objX = canvas.width / 2;
+            objY = canvas.height / 2;
+            drawBall();
+        }
+        
+        function onDown(e) {
+            var offsetX = canvas.getBoundingClientRect().left;
+            var offsetY = canvas.getBoundingClientRect().top;
+
+            if(e.clientX){
+              x = e.clientX - offsetX;
+              y = e.clientY - offsetY;
+            }else{
+              x = e.touches[0].clientX - offsetX;
+              y = e.touches[0].clientY - offsetY;  
+            }
+
+            if((x-objX) ** 2 + (y-objY) ** 2 < ballRadius ** 2) {
+                dragging = true;
+                ondown = true;
+                relX = objX - x;
+            }
+
+        }
+
+        function onMove(e) {
+            var offsetX = canvas.getBoundingClientRect().left;
+            var offsetY = canvas.getBoundingClientRect().top;
+        
+
+            if(e.clientX){
+              x = e.clientX - offsetX;
+              y = canvas.height / 2;
+            }else{
+              x = e.touches[0].clientX - offsetX;
+              y = canvas.height / 2;  
+            }
+            if (dragging) {
+                objX = x + relX;
+                objY = y;
+                drawBall();
+            }
+ 
+        }
+
+
+        function onUp(e) {
+            maxx = x;
+            dragging = false;
+            ondown = false;
+            t = 0;
+        }
+        
+        function drawBall(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(objX, objY, ballRadius, 0, Math.PI*2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+            
+        }
+
+        function draw(){
+            if(ondown){
+                return
+            }else{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawBall();
+                t += dt;
+                objX = canvas.width / 2 + (maxx - canvas.width/2)*Math.cos(t)*Math.exp(-t);
+            }
+        }
+        setInterval(draw, 5);
+
+        canvas.addEventListener('mousedown', onDown, false);
+        canvas.addEventListener('mousemove', onMove, false);
+        canvas.addEventListener('mouseup', onUp, false);
+
+        canvas.addEventListener('touchstart', onDown, false);
+        canvas.addEventListener('touchmove', onMove, false);
+        canvas.addEventListener('touchend', onUp, false);
+
+      </script>
+
+
+  </body>
+
+</html>

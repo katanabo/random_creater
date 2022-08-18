@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>touch sample</title>
+  </head>
+
+  <style>
+    canvas {background: #eee; display: block; margin: 20px auto;}
+    canvas{
+      touch-action: none;
+    }
+  </style>
+
+  <body onload="init()">
+    <canvas id="mycanvas" width="320" height="590"></canvas>
+
+    <script>
+      
+        var canvas = document.getElementById( "mycanvas" );
+        var ctx = canvas.getContext("2d");
+        var x, y, relX, relY, objX, objY;
+        var dragging = false;
+        var ondown = true;
+        var ac = 0.1;
+
+        //ball
+        var color = "#ff7f50";
+        var ballRadius = 20;
+        var dx = 2
+        var dy = -3
+
+        // velocity
+        var xt = [];
+        var yt = [];
+
+        //bricks
+        var brickRowCount = 8;
+        var brickColumnCount = 6;
+        var brickWidth = 35;
+        var brickHeight = 20;
+        var brickPadding = 10;
+        var brickOffsetTop = 30;
+        var brickOffsetLeft = 30;
+        var bricks = [];
+        for(var c = 0; c < brickColumnCount; c++){
+            bricks[c] = [];
+            for(var r = 0; r < brickRowCount; r++){
+                bricks[c][r] = {objX:0, objY:0, status:1};
+            }
+        }
+
+
+        function init() {
+            objX = canvas.width / 2
+            objY = canvas.height / 2
+            drawBall();
+        }
+        
+        function onDown(e) {
+            var offsetX = canvas.getBoundingClientRect().left;
+            var offsetY = canvas.getBoundingClientRect().top;
+
+            if(e.clientX){
+              x = e.clientX - offsetX;
+              y = e.clientY - offsetY;
+            }else{
+              x = e.touches[0].clientX - offsetX;
+              y = e.touches[0].clientY - offsetY;  
+            }
+
+            if((x-objX) ** 2 + (y-objY) ** 2 < ballRadius ** 2) {
+                dragging = true;
+                ondown = true;
+                relX = objX - x;
+                relY = objY - y;
+            }
+
+        }
+
+        function onMove(e) {
+            var offsetX = canvas.getBoundingClientRect().left;
+            var offsetY = canvas.getBoundingClientRect().top;
+        
+
+            if(e.clientX){
+              x = e.clientX - offsetX;
+              y = e.clientY - offsetY;
+            }else{
+              x = e.touches[0].clientX - offsetX;
+              y = e.touches[0].clientY - offsetY;  
+            }
+            if (dragging) {
+                objX = x + relX;
+                objY = y + relY;
+                drawBall();
+                xt.push(x);
+                yt.push(y);
+            }
+ 
+        }
+
+
+        function onUp(e) {
+            if(xt.length < 3 || yt.length < 3){
+                dx = 0;
+                dy = 0;
+            }else{
+                dx = 0.5*(xt[xt.length - 1] - xt[xt.length - 2])
+                dy = 0.5*(yt[yt.length - 1] - yt[yt.length - 2])
+                if(dx > 3 || dy > 3){
+                    var vel = (dx**2 + dy**2)**(1/2);
+                    dx /= vel;
+                    dy /= vel;
+                    dx *= 6;
+                    dy *= 6;
+                }
+            }
+            dragging = false;
+            ondown = false;
+            xt = [];
+            yt = [];
+        }
+        
+        function drawBall(){
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.beginPath();
+            ctx.arc(objX, objY, ballRadius, 0, Math.PI*2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
+            
+        }
+
+        function drawBricks(){
+                for(var c = 0; c < brickColumnCount; c++){
+                    for(var r = 0; r < brickRowCount; r++){
+                        if(bricks[c][r].status == 1){
+                            var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+                            var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+                        
+                            bricks[c][r].x = brickX;
+                            bricks[c][r].y = brickY;
+                            ctx.beginPath();
+                            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                            ctx.fillStyle = "#8fbc8f";
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+                }
+            }
+        function draw(){
+            drawBricks();
+            collisionDetection();
+            if(ondown){
+                return
+            }else{
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawBricks();
+                collisionDetection();
+                drawBall();
+                if(objY + dy > canvas.height-ballRadius || objY + dy < ballRadius){
+                    dy = -0.9*dy;
+                }
+                if(objX + dx > canvas.width-ballRadius || objX + dx < ballRadius){
+                    dx = -dx;
+                }
+                dy += ac;
+                objX += dx;
+                objY += dy;
+            }
+        }
+
+
+        function collisionDetection(){
+            for(var c = 0; c < brickColumnCount; c++){
+                for(var r = 0; r < brickRowCount; r++){
+                    var b = bricks[c][r];
+                    if(b.status == 1){
+                        if(objX > b.x && objX < b.x + brickWidth && objY > b.y && objY < b.y + brickHeight){
+                            dy = -dy;
+                            b.status = 0;
+                            ac = -ac;
+                        }
+                    }
+                }
+            }
+        }            
+
+        setInterval(draw, 10);
+        setInterval(drawBricks, 10);
+
+        canvas.addEventListener('mousedown', onDown, false);
+        canvas.addEventListener('mousemove', onMove, false);
+        canvas.addEventListener('mouseup', onUp, false);
+
+        canvas.addEventListener('touchstart', onDown, false);
+        canvas.addEventListener('touchmove', onMove, false);
+        canvas.addEventListener('touchend', onUp, false);
+
+      </script>
+
+
+  </body>
+
+</html>
